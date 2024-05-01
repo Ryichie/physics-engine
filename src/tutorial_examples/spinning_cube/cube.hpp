@@ -1,5 +1,4 @@
-#include <numeric>
-#include "screen.h"
+#include "screen.hpp"
 
 struct vec3 {
     float x,y,z;
@@ -9,7 +8,7 @@ struct connection {
     int a, b;
 };
 
-void rotate(vec3 &point, float x = 1, float y = 1, float z = 1) {
+inline void rotate(vec3 &point, float x = 1, float y = 1, float z = 1) {
     float rad = 0;
     rad = x;
     point.y = std::cos(rad) * point.y - std::sin(rad) * point.z;
@@ -25,7 +24,7 @@ void rotate(vec3 &point, float x = 1, float y = 1, float z = 1) {
 
 }
 
-void line(Screen &screen, float x1, float y1, float x2, float y2) {
+inline void line(Screen &screen, float x1, float y1, float x2, float y2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
 

@@ -1,8 +1,8 @@
 #include <SDL2/SDL.h>
-#include "cube.h"
+#include "cube.hpp"
 
 
-void execute () {
+inline void execute () {
     Screen screen;
 
     std::vector<vec3> points {

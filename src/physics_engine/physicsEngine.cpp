@@ -1,10 +1,9 @@
 #include "physicsEngine.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
 #include <iostream>
 
+const int ONE_SECOND = 1000;
 
 PhysicsEngine::PhysicsEngine() {
 
@@ -16,6 +15,8 @@ PhysicsEngine::~PhysicsEngine() {
 
 void PhysicsEngine::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen) {
     int flags = 0;
+    this->width = width;
+    this->height = height;
     if (fullscreen) {
         flags = SDL_WINDOW_FULLSCREEN;
     }
@@ -32,6 +33,10 @@ void PhysicsEngine::init(const char *title, int xpos, int ypos, int width, int h
             std::cout << "Renderer created." << std::endl;
         }
         isRunning = true;
+
+        Rectangle rectangle(width / 2, counter, 10, 10);
+        rectangles.push_back(rectangle);
+
     } else {
         isRunning = false;
     }
@@ -50,24 +55,28 @@ void PhysicsEngine::handleEvents() {
 }
 
 void PhysicsEngine::update() {
+    counter++;
+
+    for (Rectangle &rectangle : rectangles) {
+        rectangle.updatePosition(rectangle.getPosition()[0], rectangle.getPosition()[1] + counter);
+    }
+
+    SDL_Delay(ONE_SECOND / framesPerSecond);
 }
 
 void PhysicsEngine::render() {
     SDL_RenderClear(renderer);
 
     // add things to be rendered.
-
-    SDL_Rect rect;
-    rect.x = 250;
-    rect.y = 150;
-    rect.w = 200;
-    rect.h = 200;
-
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &rect);
 
+    for (Rectangle &rectangle : rectangles) {
+        SDL_Rect rect = rectangle.getRect();
+        SDL_RenderDrawRect(renderer, &rect);
+        SDL_RenderFillRect(renderer, &rect);
+    }
+    
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-
     SDL_RenderPresent(renderer);
 }
 

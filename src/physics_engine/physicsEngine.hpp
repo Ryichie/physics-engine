@@ -1,5 +1,6 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include "Rectangle.hpp"
 
 class PhysicsEngine {
 
@@ -20,7 +21,12 @@ public:
     }
 private:
     int counter = 0;
+    int width;
+    int height;
+    int framesPerSecond = 60;
     bool isRunning;
+    // float currentTime;
+    std::vector<Rectangle> rectangles;
     SDL_Window *window;
     SDL_Renderer *renderer;
 };

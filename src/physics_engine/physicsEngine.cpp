@@ -3,7 +3,9 @@
 #include <SDL2/SDL_events.h>
 #include <iostream>
 
-const int ONE_SECOND = 1000;
+const float ONE_SECOND = 1000;
+const int TARGET_FPS = 60;
+
 
 PhysicsEngine::PhysicsEngine() {
 
@@ -34,7 +36,7 @@ void PhysicsEngine::init(const char *title, int xpos, int ypos, int width, int h
         }
         isRunning = true;
 
-        Rectangle rectangle(width / 2, counter, 10, 10);
+        Rectangle rectangle(width / 2, -50, 10, 10);
         rectangles.push_back(rectangle);
 
     } else {
@@ -55,14 +57,23 @@ void PhysicsEngine::handleEvents() {
 }
 
 void PhysicsEngine::update() {
-    counter++;
+    // Calculate time (ms) since last update
+    Uint32 currentTime = SDL_GetTicks();
+    double deltaTime = (currentTime - lastUpdateTime) / ONE_SECOND; // Convert milliseconds to seconds
+    lastUpdateTime = currentTime;
 
-    for (Rectangle &rectangle : rectangles) {
-        rectangle.updatePosition(rectangle.getPosition()[0], rectangle.getPosition()[1] + counter);
+    // Adjust deltaTime to achieve target FPS
+    double targetDeltaTime = 1.0 / TARGET_FPS;
+    if (deltaTime < targetDeltaTime) {
+        SDL_Delay((targetDeltaTime - deltaTime) * ONE_SECOND); // Delay in milliseconds
+        deltaTime = targetDeltaTime;
     }
 
-    SDL_Delay(ONE_SECOND / framesPerSecond);
+    for (Rectangle &rectangle : rectangles) {
+        rectangle.updatePosition(deltaTime);
+    }
 }
+
 
 void PhysicsEngine::render() {
     SDL_RenderClear(renderer);
@@ -74,10 +85,14 @@ void PhysicsEngine::render() {
         SDL_Rect rect = rectangle.getRect();
         SDL_RenderDrawRect(renderer, &rect);
         SDL_RenderFillRect(renderer, &rect);
+        if (rect.y >= this->height) {
+            isRunning = false;
+        }
     }
     
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderPresent(renderer);
+
 }
 
 void PhysicsEngine::clean() {

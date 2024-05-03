@@ -20,12 +20,10 @@ public:
         return isRunning;
     }
 private:
-    int counter = 0;
     int width;
     int height;
-    int framesPerSecond = 60;
     bool isRunning;
-    // float currentTime;
+    int lastUpdateTime = 0;
     std::vector<Rectangle> rectangles;
     SDL_Window *window;
     SDL_Renderer *renderer;
